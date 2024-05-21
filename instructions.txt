@@ -1,7 +1,7 @@
 Instructions for working with this project:
 
 Running:
-* `tsc && node dist/main.js` to compile and run
+* `ts-node src/main.ts` to run directly from ts-node
 
 Typechecking:
 * `tsc --noEmit` to run the TypeScript typechecker without re-compiling files
