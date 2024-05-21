@@ -1,0 +1,10 @@
+Instructions for working with this project:
+
+Running:
+* `tsc && node dist/main.js` to compile and run
+
+Typechecking:
+* `tsc --noEmit` to run the TypeScript typechecker without re-compiling files
+
+Testing:
+* No automated tests yet
