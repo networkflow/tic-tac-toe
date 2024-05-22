@@ -1,3 +1,5 @@
+import { Interface } from 'node:readline/promises';
+
 import { BOARD_HEIGHT, BOARD_WIDTH } from './config';
 import { GameState, Player } from './game-state';
 
@@ -50,11 +52,7 @@ export function getBoardRendering(state: GameState): string {
     return padColumnEntry(label);
   };
   const getPaddedRowLabel = (row: number) => {
-    const label = (row + 1).toString();
-    return (
-      ' '.repeat(rowLabelWidth - label.length) +
-      label
-    );
+    return (row + 1).toString().padStart(rowLabelWidth);
   };
   // Render the first row of text in the board, displaying column labels in the
   // appropriate positions:
@@ -125,5 +123,53 @@ export function getBoardRendering(state: GameState): string {
       boardString += getDividerRowRendering();
     }
   }
-  return boardString;
+  // Remove trailing newline:
+  return boardString.trimEnd();
 }
+
+// Actually prints the board (also responsible for managing whitespace and
+// adding any appropriate dividers, etc.):
+export function printBoard(state: GameState): void {
+  console.log("\n" + getBoardRendering(state));
+}
+
+export async function promptUserForValidMove(
+  rl: Interface,
+  state: GameState,
+): Promise<[number, number]> {
+  if (state.isGameFinished()) {
+    throw new Error("Can't get move for finished game");
+  }
+
+  let moveInput = await rl.question("Make a move (e.g. A2): ");
+  while (true) {
+    const move = _parseMoveInput(moveInput);
+    if (move !== null) {
+      return move;
+    }
+    moveInput = await rl.question("Please enter a valid move (e.g. A2): ");
+  }
+}
+
+function _parseMoveInput(moveInput: string): [number, number] | null {
+  const match = moveInput.match(/([A-Z]+)([1-9][0-9]*)/);
+  if (match === null) {
+    return null;
+  }
+  return [
+    _rowIndexFromValidatedLabel(match[2]),
+    _columnIndexFromValidatedLabel(match[1]),
+  ];
+}
+
+// Currently only supports 26 columns (inputs from 'A' to 'Z'):
+function _columnIndexFromValidatedLabel(label: string) {
+  if (label.length > 1) {
+    throw new Error("Only 26 columns supported");
+  }
+  return label.charCodeAt(0) - 'A'.charCodeAt(0);
+};
+
+function _rowIndexFromValidatedLabel(label: string) {
+  return parseInt(label) - 1;
+};
