@@ -1,7 +1,7 @@
 import { Interface } from 'node:readline/promises';
 
 import { BOARD_HEIGHT, BOARD_WIDTH } from './config';
-import { GameState, Player } from './game-state';
+import { GameResult, GameState, Player } from './game-state';
 
 
 /* Returns a display string that looks like this, based on the given state:
@@ -131,6 +131,24 @@ export function getBoardRendering(state: GameState): string {
 // adding any appropriate dividers, etc.):
 export function printBoard(state: GameState): void {
   console.log("\n" + getBoardRendering(state));
+}
+
+export function printResultInfo(state: GameState): void {
+  printBoard(state);
+  
+  switch (state.getResult()) {
+    case null:
+      throw new Error("Game not finished");
+    case GameResult.OWon:
+      console.log("O won!");
+      break;
+    case GameResult.XWon:
+      console.log("X won!");
+      break;
+    case GameResult.Tie:
+      console.log("Tie!");
+      break;
+  }
 }
 
 export async function promptUserForValidMove(

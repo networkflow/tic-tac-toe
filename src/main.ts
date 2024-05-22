@@ -1,7 +1,11 @@
 import { createInterface } from 'node:readline/promises';
 
 import { GameState } from './game-state'
-import { printBoard, promptUserForValidMove } from './interface';
+import {
+  printBoard,
+  printResultInfo,
+  promptUserForValidMove,
+} from './interface';
 
 
 // Wrapping everything in a main function this way to avoid warnings like
@@ -21,6 +25,7 @@ const main = async () => {
     const move = await promptUserForValidMove(rl, gameState);
     gameState.makeMove(...move);
   }
-  printBoard(gameState);
+  printResultInfo(gameState);
+  rl.close();
 };
 main();
