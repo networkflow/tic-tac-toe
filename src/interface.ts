@@ -162,7 +162,7 @@ export async function promptUserForValidMove(
   let moveInput = await rl.question("Make a move (e.g. A2): ");
   while (true) {
     const move = _parseMoveInput(moveInput);
-    if (move !== null) {
+    if (move !== null && state.moveAllowed(...move)) {
       return move;
     }
     moveInput = await rl.question("Please enter a valid move (e.g. A2): ");
